@@ -1,0 +1,20 @@
+@import "hsl-radix-colors/mauve.css";
+@import "hsl-radix-colors/violet.css";
+@import "hsl-radix-colors/grass.css";
+@import "hsl-radix-colors/tomato.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+   :root {
+      --radius: 0.5rem;
+   }
+   * {
+      @apply border-border;
+   }
+   body {
+      @apply bg-background text-foreground;
+   }
+}
