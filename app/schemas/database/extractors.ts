@@ -1,7 +1,8 @@
 import { relations } from "drizzle-orm";
-import { jsonb, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import { extractorJobsTable } from "./extractor-jobs";
+import jsonb from "./utils";
 
 export const extractorsTable = pgTable("extractors", {
    id: serial("id").primaryKey(),
@@ -19,7 +20,15 @@ export const extractorsRelations = relations(extractorsTable, ({ many }) => ({
    extractor_jobs: many(extractorJobsTable),
 }));
 
-const questionSchema = z.object({ tag: z.string().min(1), question: z.string() });
+const questionSchema = z.object({
+   tag: z
+      .string()
+      .min(1, "Tag must contain at least 1 character")
+      .refine((data) => /^[a-zA-Z]+$/.test(data), {
+         message: "Tags may only contain letters and no spaces",
+      }),
+   question: z.string().min(5, "Question must contain at least 5 characters"),
+});
 export type Question = z.infer<typeof questionSchema>;
 
 export const questionsSchema = z.array(questionSchema).refine(
@@ -31,5 +40,5 @@ export const questionsSchema = z.array(questionSchema).refine(
       }
       return true;
    },
-   { message: "Tags must be unique", path: ["", "root"] },
+   { message: "Tags must be unique" },
 );

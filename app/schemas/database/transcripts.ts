@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
-import { jsonb, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { extractorJobsTable } from "./extractor-jobs";
+import jsonb from "./utils";
 
 export const TRANSCRIPT_STATUS = ["started", "failed", "completed"] as const;
 export const TRANSCRIPT_LANGUAGES = ["es", "en"] as const;
