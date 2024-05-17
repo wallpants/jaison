@@ -12,6 +12,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { SubmitOptions, useSubmit } from "@remix-run/react";
 
 const Form = FormProvider;
 
@@ -36,6 +37,30 @@ const FormField = <
       </FormFieldContext.Provider>
    );
 };
+
+/**
+ * Helper that adds type to `request.json()`.
+ * Data should already have been validated in client and will
+ * be validated again by `farm-server`.
+ */
+async function getFormFields<T = never>(request: Request) {
+   return (await request.json()) as T;
+}
+
+function useFormSubmit<T extends FieldValues>(params?: { options?: SubmitOptions }) {
+   const submit = useSubmit();
+
+   const onSubmit = (values: T) => {
+      const submitOptions: SubmitOptions = {
+         method: "post",
+         encType: "application/json",
+      };
+      if (params?.options) Object.assign(submitOptions, params.options);
+      submit(values, submitOptions);
+   };
+
+   return onSubmit;
+}
 
 const useFormField = () => {
    const fieldContext = React.useContext(FormFieldContext);
@@ -165,5 +190,7 @@ export {
    FormItem,
    FormLabel,
    FormMessage,
+   getFormFields,
    useFormField,
+   useFormSubmit,
 };
