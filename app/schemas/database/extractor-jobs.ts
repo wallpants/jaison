@@ -1,7 +1,8 @@
 import { relations } from "drizzle-orm";
-import { integer, jsonb, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { extractorsTable } from "./extractors";
 import { transcriptsTable } from "./transcripts";
+import jsonb from "./utils";
 
 export const EXTRACTOR_JOB_STATUS = [
    "waiting",
