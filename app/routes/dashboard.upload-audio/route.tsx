@@ -18,7 +18,6 @@ import { useNavigate } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { FormExtractor } from "./form-extractor";
 import { FormLanguage } from "./form-language";
 import { FormName } from "./form-name";
 import { FormSchema, formSchema } from "./schema";
@@ -91,7 +90,7 @@ export default function UploadAudio() {
                >
                   <FormName form={form} />
                   <FormLanguage form={form} />
-                  <FormExtractor form={form} />
+                  {/* <FormExtractor form={form} /> */}
                   <DialogFooter className="col-span-2">
                      <Button>Continue</Button>
                   </DialogFooter>

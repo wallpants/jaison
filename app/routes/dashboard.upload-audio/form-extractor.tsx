@@ -38,7 +38,7 @@ type Props = {
    form: UseFormReturn<FormSchema>;
 };
 
-export function ComboboxForm({ form }: Props) {
+export function FormExtractor({ form }: Props) {
    return (
       <div className="space-y-6">
          <FormField
