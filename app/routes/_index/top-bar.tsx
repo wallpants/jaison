@@ -13,7 +13,7 @@ export const TopBar = ({ userEmail }: Props) => {
       <div className="flex h-12 shrink-0 items-center justify-between border-b-2 px-4 py-2">
          <Link to={location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"}>
             <h2 className="text-xl font-bold">
-               Star<span className="text-primary">ter</span>
+               J<span className="text-primary">ai</span>son
             </h2>
          </Link>
          <div className="flex items-center">
