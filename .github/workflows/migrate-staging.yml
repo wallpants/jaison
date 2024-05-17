@@ -2,9 +2,9 @@
 name: Migrate (Staging)
 
 on:
-  push:
-    branches:
-      - staging
+  # push:
+  #   branches:
+  #     - staging
   workflow_dispatch:
 
 jobs:
