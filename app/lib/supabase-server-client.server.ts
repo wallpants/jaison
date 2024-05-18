@@ -5,7 +5,7 @@ export function createServerClient(request: Request) {
    const cookies = parse(request.headers.get("Cookie") ?? "");
    const headers = new Headers();
 
-   const supabase = _createServerClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY, {
+   const supabase = _createServerClient(ENV.SUPABASE_URL, ENV.SUPABASE_SERVICE_ROLE_KEY, {
       cookies: {
          get(key) {
             return cookies[key];
