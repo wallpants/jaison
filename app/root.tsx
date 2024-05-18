@@ -28,7 +28,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
    return (
-      <div className="fixed inset-0 min-w-[1000px]">
+      <div className="fixed inset-0">
          <Outlet />
       </div>
    );
