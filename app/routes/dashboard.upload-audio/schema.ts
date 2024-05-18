@@ -1,4 +1,5 @@
 import { TRANSCRIPT_LANGUAGES } from "@/schemas/database";
+import { zNumber } from "@/schemas/utils";
 import { type FileError } from "react-dropzone-esm";
 import { z } from "zod";
 
@@ -8,11 +9,8 @@ export const AUDIO_MAX_SIZE_MB = 20;
 export const formSchema = z.object({
    language: z.enum(TRANSCRIPT_LANGUAGES),
    name: z.string().min(1, "Name is required"),
-   // useFieldArray can only be used with arrays of objects,
-   // that's why keywords is Array<{ keyword: string }> instead of string[]
-   keywords: z.array(z.object({ keyword: z.string().trim().min(1) })),
    audioFile: z.custom<File>((f) => f instanceof File, "Audio file is required"),
-   extractorId: z.coerce.number(),
+   extractorId: zNumber("Required"),
 });
 
 export type FormSchema = z.infer<typeof formSchema>;
