@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const FormName = ({ form, className }: Props) => {
-   const audioFileName = form.watch("audioFile")?.name;
+   const audioFileName = form.watch("audioFile").name;
 
    useEffect(() => {
       // If we add a file and we have not set a name,

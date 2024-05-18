@@ -1,7 +1,7 @@
 // cspell:ignore weba
 import { CheckIcon, FileAudioIcon } from "lucide-react";
 import { useCallback } from "react";
-import { ErrorCode, useDropzone, type DropzoneOptions, type FileError } from "react-dropzone-esm";
+import { ErrorCode, useDropzone, type DropzoneOptions } from "react-dropzone-esm";
 import { type UseFormReturn } from "react-hook-form";
 
 import { LoadingIndicator } from "@/components/loading-indicator";
@@ -9,11 +9,11 @@ import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/for
 import { cn } from "@/lib/utils";
 import { AUDIO_MAX_SIZE_MB, FormSchema, validateAudioLength } from "./schema";
 
-interface Props {
+type Props = {
    form: UseFormReturn<FormSchema>;
    isValidatingAudioFile: boolean;
    setIsValidatingAudioFile: (newValue: boolean) => void;
-}
+};
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(() => resolve(true), ms));
 
@@ -25,8 +25,8 @@ export const FormFile = ({ form, isValidatingAudioFile, setIsValidatingAudioFile
          const acceptedFile = acceptedFiles[0];
          const rejectedFile = rejectedFiles[0];
 
-         if (rejectedFile) {
-            const firstError: FileError = rejectedFile.errors[0]!;
+         if (rejectedFile?.errors[0]) {
+            const firstError = rejectedFile.errors[0];
             const message =
                firstError.code === (ErrorCode.FileTooLarge as string)
                   ? `Audio file must not exceed size ${AUDIO_MAX_SIZE_MB}MB`
@@ -43,7 +43,7 @@ export const FormFile = ({ form, isValidatingAudioFile, setIsValidatingAudioFile
                   type: error.code,
                });
             } else {
-               form.setValue("audioFile", acceptedFiles[0]!, {
+               form.setValue("audioFile", acceptedFile, {
                   shouldDirty: true,
                   shouldTouch: true,
                   shouldValidate: true,
@@ -101,7 +101,7 @@ const InputBox = ({
 }: {
    isDragActive: boolean;
    isValidating: boolean;
-   file: File;
+   file: File | null;
 }) => {
    if (isValidating) {
       return (

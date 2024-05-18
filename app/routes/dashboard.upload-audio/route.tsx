@@ -50,7 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
          })
          .returning({ id: transcriptsTable.id });
       if (!inserted) throw Error("failed to insert transcript");
-      return { transcriptId: inserted?.id };
+      return { transcriptId: inserted.id };
    }
 
    // DELETE: Delete transcript in case of file upload error
@@ -126,16 +126,19 @@ export default function UploadAudio() {
                setOpen(false);
                return;
             }
-            if (error) {
-               // if file failed to upload, delete newly created transcript
-               submit(
-                  { transcriptId: actionData.transcriptId },
-                  { method: "DELETE", encType: "application/json" },
-               );
-               form.setError("root", {
-                  message: error.message,
-               });
-            }
+            // if file failed to upload, delete newly created transcript
+            submit(
+               { transcriptId: actionData.transcriptId },
+               { method: "DELETE", encType: "application/json" },
+            );
+            form.setError("root", {
+               message: error.message,
+            });
+         })
+         .catch((err: unknown) => {
+            form.setError("root", {
+               message: (err as Error).message,
+            });
          });
       // only actionData changes should trigger this hook
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,7 +146,9 @@ export default function UploadAudio() {
 
    useEffect(() => {
       if (!open) {
-         setTimeout(() => navigate(".."), 100);
+         setTimeout(() => {
+            navigate("..");
+         }, 100);
       }
    }, [navigate, open]);
 
