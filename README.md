@@ -10,25 +10,19 @@
 
 ### Local Development
 
-1. Create `.env` file:
-
-   ```sh
-   cp .env.example .env
-   ```
-
-2. Start local **supabase**:
+1. Start local **supabase**:
 
    ```sh
    supabase start
    ```
 
-3. Push [database schema](./app/schemas/database/) to supabase's postgres:
+2. Create `.env` file and fill variables:
 
    ```sh
-   bun drizzle:push
+   cp .env.example .env
    ```
 
-4. Start **remix** dev server:
+3. Start **remix** dev server:
 
    ```sh
    bun dev
