@@ -4,7 +4,7 @@ type Filters<T> = Partial<Record<keyof T, string> & { _global: string }>;
 type SortDir = "asc" | "desc";
 export type Sort = { key: string; dir: SortDir };
 
-export type Column<T extends { id: number }> = {
+export type UseTableColumn<T extends { id: number }> = {
    id: string;
    header?: string;
    cell: (props: { row: T; table: UseTable<T> }) => ReactNode;
@@ -19,7 +19,7 @@ export type Column<T extends { id: number }> = {
 
 type Props<T extends { id: number }> = {
    /** Should be wrapped in `React.useMemo` if declared within React Component. */
-   columns: Column<T>[];
+   columns: UseTableColumn<T>[];
    rows: T[];
    initialFilters?: Filters<T>;
    initialSort?: Sort;

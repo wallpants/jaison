@@ -22,7 +22,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
    const extractors = await db.query.extractorsTable.findMany();
    const transcripts = await db.query.transcriptsTable.findMany({
-      with: { extractor_jobs: true },
+      with: { extractor_jobs: { with: { extractor: true } } },
    });
 
    return json(

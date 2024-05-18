@@ -1,15 +1,6 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Column, useTable } from "@/lib/use-table";
-import { Row as TranscriptsRow } from "../columns";
-
-type Row = TranscriptsRow["extractor_jobs"][number];
-
-const columns: Column<Row>[] = [
-   {
-      id: "id",
-      cell: () => "id",
-   },
-];
+import { useTable } from "@/lib/use-table";
+import { Row, columns } from "./columns";
 
 export const ExtractorJobsTable = ({ extractorJobs }: { extractorJobs: Row[] }) => {
    const table = useTable<Row>({
@@ -17,14 +8,22 @@ export const ExtractorJobsTable = ({ extractorJobs }: { extractorJobs: Row[] }) 
       columns,
    });
 
-   console.log("table: ", table);
-
    return (
-      <Table>
+      <Table className="table-fixed">
          <TableBody>
-            <TableRow>
-               <TableCell>Hello world</TableCell>
-            </TableRow>
+            {table.rows.map((row) => (
+               <TableRow key={row.id} className="group">
+                  {table.columns.map((column) => (
+                     <TableCell
+                        key={column.id}
+                        style={column.cellStyle}
+                        className={column.cellClassName}
+                     >
+                        <column.cell row={row} table={table} />
+                     </TableCell>
+                  ))}
+               </TableRow>
+            ))}
          </TableBody>
       </Table>
    );

@@ -1,52 +1,32 @@
 import { TableRowActions } from "@/components/table-row-actions";
-import { Button } from "@/components/ui/button";
-import { UseTable, UseTableColumn } from "@/lib/use-table";
-import { cn } from "@/lib/utils";
-import { type SerializeFrom } from "@remix-run/node";
-import { ChevronRightIcon, TrashIcon } from "lucide-react";
-import { type loader } from "../route";
+import { UseTableColumn } from "@/lib/use-table";
+import { TrashIcon } from "lucide-react";
+import { Row as TranscriptsRow } from "../columns";
 
-export type Row = SerializeFrom<typeof loader>["transcripts"][number];
-
-const CellExpand = ({ row, table }: { row: Row; table: UseTable<Row> }) => {
-   const isExpanded = table.getIsExpanded(row.id);
-   return (
-      <Button
-         variant="ghost"
-         className="size-8 p-0 group-hover:border-primary group-hover:enabled:border"
-         onClick={() => table.setIsExpanded(row.id, (expanded) => !expanded)}
-      >
-         <ChevronRightIcon
-            className={cn("size-4 transition-transform", isExpanded && "rotate-90")}
-         />
-         <span className="sr-only">{isExpanded ? "Collapse" : "Expand"}</span>
-      </Button>
-   );
-};
+export type Row = TranscriptsRow["extractor_jobs"][number];
 
 export const columns: UseTableColumn<Row>[] = [
    {
       id: "expand",
-      headerStyle: { width: 60 },
-      cell: CellExpand,
-      cellClassName: "py-0",
+      cellStyle: { width: 60 },
+      cell: () => "",
    },
    {
       id: "name",
       header: "Name",
-      headerStyle: { width: 200 },
-      cell: ({ row }) => row.name,
+      cellStyle: { width: 200 },
+      cell: ({ row }) => row.extractor.name,
    },
    {
       id: "status",
       header: "Status",
-      headerStyle: { width: 150 },
+      cellStyle: { width: 150 },
       cell: ({ row }) => row.status,
    },
    {
       id: "created_at_time",
       header: "Created",
-      headerStyle: { width: 100 },
+      cellStyle: { width: 100 },
       cell: ({ row }) => {
          const formatter = new Intl.DateTimeFormat("en-US", {
             hour: "numeric",
@@ -58,7 +38,7 @@ export const columns: UseTableColumn<Row>[] = [
    },
    {
       id: "created_at_date",
-      headerStyle: { width: 100 },
+      cellStyle: { width: 100 },
       cell: ({ row }) => {
          const formatter = new Intl.DateTimeFormat("en-US", {
             month: "short",
@@ -69,7 +49,7 @@ export const columns: UseTableColumn<Row>[] = [
    },
    {
       id: "actions",
-      headerStyle: { width: 50 },
+      cellStyle: { width: 50 },
       cellClassName: "py-0",
       cell: ({ row }) => (
          <TableRowActions

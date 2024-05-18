@@ -17,4 +17,14 @@
    body {
       @apply bg-background text-foreground;
    }
+   ::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 10px;
+      height: 10px;
+   }
+
+   ::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: hsl(var(--violet-5));
+   }
 }
