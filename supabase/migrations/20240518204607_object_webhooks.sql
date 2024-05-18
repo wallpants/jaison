@@ -5,5 +5,5 @@ execute function "supabase_functions"."http_request"(
   'POST',
   '{"Content-Type":"application/json"}',
   '{}',
-  '3000'
+  '5000'
 );

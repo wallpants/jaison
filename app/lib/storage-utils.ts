@@ -15,7 +15,7 @@ export function generateObjectPath({
 
 const SParsedObjectPath = z.object({
    user_id: z.string().uuid(),
-   transcript_id: z.string().uuid(),
+   transcript_id: z.coerce.number(),
    fileExtension: z.string().min(1),
 });
 export function parseObjectPath(objectPath: string) {
