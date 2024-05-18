@@ -1,13 +1,13 @@
-import { useMemo, useState, type HTMLAttributes, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type HTMLAttributes, type ReactNode } from "react";
 
 type Filters<T> = Partial<Record<keyof T, string> & { _global: string }>;
 type SortDir = "asc" | "desc";
 export type Sort = { key: string; dir: SortDir };
 
-export type ColumnDef<T extends { id: number }> = {
+export type Column<T extends { id: number }> = {
    id: string;
    header?: string;
-   cell: (props: { row: T }) => ReactNode;
+   cell: (props: { row: T; table: UseTable<T> }) => ReactNode;
    sortFn?: (a: T, b: T) => number;
    filterFn?: (row: T, filters: Filters<T>) => boolean;
    headerStyle?: HTMLAttributes<HTMLTableCellElement>["style"];
@@ -19,7 +19,7 @@ export type ColumnDef<T extends { id: number }> = {
 
 type Props<T extends { id: number }> = {
    /** Should be wrapped in `React.useMemo` if declared within React Component. */
-   columns: ColumnDef<T>[];
+   columns: Column<T>[];
    rows: T[];
    initialFilters?: Filters<T>;
    initialSort?: Sort;
@@ -35,6 +35,7 @@ export function useTable<T extends { id: number }>({
 }: Props<T>) {
    const [filters, setFilters] = useState(initialFilters);
    const [sort, setSort] = useState(initialSort);
+   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
    const filteredAndSortedRows = useMemo(() => {
       let newRows = [...rows];
@@ -63,6 +64,21 @@ export function useTable<T extends { id: number }>({
    }, [columns, filters, rows, sort]);
 
    const visibleColumns = useMemo(() => columns.filter((column) => !column.hidden), [columns]);
+   const getIsExpanded = useCallback((id: T["id"]) => Boolean(expandedRows[id]), [expandedRows]);
+
+   /**
+    * Set: SetIsExpanded(id, false)
+    * Toggle: SetIsExpanded(id, (isExpanded) => !isExpanded)
+    */
+   const setIsExpanded = useCallback(
+      (id: T["id"], isExpanded: boolean | ((curr: boolean) => boolean)) => {
+         setExpandedRows({
+            ...expandedRows,
+            [id]: typeof isExpanded === "boolean" ? isExpanded : isExpanded(getIsExpanded(id)),
+         });
+      },
+      [expandedRows, getIsExpanded],
+   );
 
    return {
       allRows: rows,
@@ -72,5 +88,7 @@ export function useTable<T extends { id: number }>({
       setSort,
       rows: filteredAndSortedRows,
       columns: visibleColumns,
+      getIsExpanded,
+      setIsExpanded,
    };
 }

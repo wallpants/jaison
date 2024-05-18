@@ -1,22 +1,16 @@
-import { type ColumnDef, type UseTable } from "../lib/use-table";
+import { type UseTable } from "../lib/use-table";
 import { cn } from "../lib/utils";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 type Props<T extends { id: number }> = {
-   tableColumns: ColumnDef<T>[];
-   tableRows: T[];
-   tableSort: UseTable<T>["sort"];
-   tableSetSort: UseTable<T>["setSort"];
+   table: UseTable<T>;
    containerClassName?: string;
    tableClassName?: string;
 };
 
 export const DataTable = <T extends { id: number }>({
-   tableColumns,
-   tableRows,
-   tableSort,
-   tableSetSort,
+   table,
    containerClassName,
    tableClassName,
 }: Props<T>) => (
@@ -24,7 +18,7 @@ export const DataTable = <T extends { id: number }>({
       <Table className={cn("table-fixed", tableClassName)}>
          <TableHeader>
             <TableRow>
-               {tableColumns.map((column) => (
+               {table.columns.map((column) => (
                   <TableHead
                      key={column.id}
                      style={column.headerStyle}
@@ -33,10 +27,10 @@ export const DataTable = <T extends { id: number }>({
                      {column.header ? (
                         <DataTableColumnHeader
                            title={column.header}
-                           columns={tableColumns}
+                           columns={table.columns}
                            columnId={column.id}
-                           sort={tableSort}
-                           setSort={tableSetSort}
+                           sort={table.sort}
+                           setSort={table.setSort}
                         />
                      ) : null}
                   </TableHead>
@@ -44,23 +38,23 @@ export const DataTable = <T extends { id: number }>({
             </TableRow>
          </TableHeader>
          <TableBody>
-            {tableRows.length ? (
-               tableRows.map((row) => (
+            {table.rows.length ? (
+               table.rows.map((row) => (
                   <TableRow key={row.id}>
-                     {tableColumns.map((column) => (
+                     {table.columns.map((column) => (
                         <TableCell
                            key={column.id}
                            style={column.cellStyle}
                            className={column.cellClassName}
                         >
-                           <column.cell row={row} />
+                           <column.cell row={row} table={table} />
                         </TableCell>
                      ))}
                   </TableRow>
                ))
             ) : (
                <TableRow>
-                  <TableCell colSpan={tableColumns.length} className="h-24 text-center">
+                  <TableCell colSpan={table.columns.length} className="h-24 text-center">
                      No results.
                   </TableCell>
                </TableRow>

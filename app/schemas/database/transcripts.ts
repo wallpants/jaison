@@ -23,7 +23,7 @@ export type SelectTranscript = typeof transcriptsTable.$inferSelect;
 export type InsertTranscript = typeof transcriptsTable.$inferInsert;
 
 export const transcriptsRelations = relations(transcriptsTable, ({ many }) => ({
-   extractor: many(extractorJobsTable),
+   extractor_jobs: many(extractorJobsTable),
 }));
 
 export type Monologue = {
