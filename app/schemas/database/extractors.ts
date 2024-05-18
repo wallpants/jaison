@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { z } from "zod";
+import { jsonb } from "../utils";
 import { extractorJobsTable } from "./extractor-jobs";
-import jsonb from "./utils";
 
 export const extractorsTable = pgTable("extractors", {
    id: serial("id").primaryKey(),

@@ -1,8 +1,9 @@
 import { customType } from "drizzle-orm/pg-core";
+import { z } from "zod";
 
 // https://github.com/drizzle-team/drizzle-orm/pull/1785
 // eslint-disable-next-line
-const jsonb = customType<{ data: any }>({
+export const jsonb = customType<{ data: any }>({
    dataType() {
       return "jsonb";
    },
@@ -24,4 +25,6 @@ const jsonb = customType<{ data: any }>({
    },
 });
 
-export default jsonb;
+/** Fails validation if passing in empty string */
+export const zNumber = (message: string) =>
+   z.preprocess((val) => (val === "" ? undefined : val), z.coerce.number({ message }).positive());
