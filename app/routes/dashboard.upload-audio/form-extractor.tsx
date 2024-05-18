@@ -35,10 +35,7 @@ export function FormExtractor({ form, extractors, className }: Props) {
          render={({ field }) => (
             <FormItem className={className}>
                <FormLabel>Extractor</FormLabel>
-               <FormDescription>
-                  Select an Extractor to process your data. Additional jobs with other Extractors
-                  can be started later.
-               </FormDescription>
+               <FormDescription>Select an Extractor to process your data.</FormDescription>
                <FormControl>
                   <Combobox
                      label="Select an extractor..."

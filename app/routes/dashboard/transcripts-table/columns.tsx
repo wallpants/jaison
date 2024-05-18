@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UseTable, UseTableColumn } from "@/lib/use-table";
 import { cn } from "@/lib/utils";
 import { type SerializeFrom } from "@remix-run/node";
-import { ChevronRightIcon, TrashIcon } from "lucide-react";
+import { CheckCircleIcon, ChevronRightIcon, Disc3Icon, TrashIcon, XCircleIcon } from "lucide-react";
 import { type loader } from "../route";
 
 export type Row = SerializeFrom<typeof loader>["transcripts"][number];
@@ -41,7 +41,23 @@ export const columns: UseTableColumn<Row>[] = [
       id: "status",
       header: "Status",
       headerStyle: { width: 150 },
-      cell: ({ row }) => row.status,
+      cell: ({ row }) => {
+         let icon = <Disc3Icon className="animate-spin" size={20} />;
+         switch (row.status) {
+            case "failed":
+               icon = <XCircleIcon className="text-destructive" size={20} />;
+               break;
+            case "completed":
+               icon = <CheckCircleIcon className="text-success" size={20} />;
+               break;
+         }
+         return (
+            <div className="flex items-center gap-x-2">
+               {icon}
+               {row.status}
+            </div>
+         );
+      },
    },
    {
       id: "created_at_time",
@@ -73,6 +89,7 @@ export const columns: UseTableColumn<Row>[] = [
       cellClassName: "py-0",
       cell: ({ row }) => (
          <TableRowActions
+            disabled={!["completed", "failed"].includes(row.status)}
             actions={[
                {
                   label: "Delete",
