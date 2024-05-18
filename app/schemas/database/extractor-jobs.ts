@@ -4,22 +4,16 @@ import { jsonb } from "../utils";
 import { extractorsTable } from "./extractors";
 import { transcriptsTable } from "./transcripts";
 
-export const EXTRACTOR_JOB_STATUS = [
-   "waiting",
-   "started",
-   "failed",
-   "completed",
-   "synced",
-] as const;
+export const EXTRACTOR_JOB_STATUS = ["waiting", "started", "failed", "completed"] as const;
 
 export const extractorJobsTable = pgTable("extractor_jobs", {
    id: serial("id").primaryKey(),
    user_id: text("user_id").notNull(),
    transcript_id: integer("transcript_id")
-      .references(() => transcriptsTable.id)
+      .references(() => transcriptsTable.id, { onDelete: "cascade" })
       .notNull(),
    extractor_id: integer("extractor_id")
-      .references(() => extractorsTable.id)
+      .references(() => extractorsTable.id, { onDelete: "cascade" })
       .notNull(),
    status: text("status", { enum: EXTRACTOR_JOB_STATUS }).notNull(),
    answers: jsonb("answers").$type<{ data: Answer[] }>(),
