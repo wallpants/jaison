@@ -4,11 +4,14 @@ import { AUTH_REDIRECT } from "@/consts";
 import { ENV } from "@/env";
 import { db } from "@/lib/db.server";
 import { createServerClient } from "@/lib/supabase-server-client.server";
+import { useTable } from "@/lib/use-table";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { UploadIcon } from "lucide-react";
 import { TopBar } from "../_index/top-bar";
 import { Sidebar } from "./sidebar";
+import { TranscriptsTable } from "./transcripts-table";
+import { columns } from "./transcripts-table/columns";
 
 export async function loader({ request }: LoaderFunctionArgs) {
    const { supabase, headers } = createServerClient(request);
@@ -18,7 +21,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
    if (!user) throw redirect(AUTH_REDIRECT);
 
    const extractors = await db.query.extractorsTable.findMany();
-   const transcripts = await db.query.transcriptsTable.findMany();
+   const transcripts = await db.query.transcriptsTable.findMany({
+      with: { extractor_jobs: true },
+   });
 
    return json(
       {
@@ -35,13 +40,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Dashboard() {
    const loaderData = useLoaderData<typeof loader>();
 
+   const table = useTable({
+      rows: loaderData.transcripts,
+      columns,
+   });
+
    return (
       <div className="size-full">
          <TopBar userEmail={loaderData.user.email} />
          <div className="flex h-full">
-            <Sidebar className="shrink-0" extractors={loaderData.extractors} />
+            <Sidebar extractors={loaderData.extractors} />
             <Main title="Uploaded Audios">
-               <div className="flex justify-between">
+               <div className="mb-4 flex items-center justify-between">
                   <p>Here&apos;s a list of audios you have uploaded</p>
                   <Button asChild>
                      <Link to="upload-audio">
@@ -50,6 +60,7 @@ export default function Dashboard() {
                      </Link>
                   </Button>
                </div>
+               <TranscriptsTable table={table} />
             </Main>
             <Outlet />
          </div>
