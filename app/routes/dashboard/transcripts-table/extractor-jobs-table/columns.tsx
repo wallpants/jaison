@@ -1,6 +1,5 @@
-import { TableRowActions } from "@/components/table-row-actions";
 import { UseTableColumn } from "@/lib/use-table";
-import { TrashIcon } from "lucide-react";
+import { CheckCircleIcon, Disc3Icon, XCircleIcon } from "lucide-react";
 import { Row as TranscriptsRow } from "../columns";
 
 export type Row = TranscriptsRow["extractor_jobs"][number];
@@ -21,7 +20,23 @@ export const columns: UseTableColumn<Row>[] = [
       id: "status",
       header: "Status",
       cellStyle: { width: 150 },
-      cell: ({ row }) => row.status,
+      cell: ({ row }) => {
+         let icon = <Disc3Icon className="animate-spin" size={20} />;
+         switch (row.status) {
+            case "failed":
+               icon = <XCircleIcon className="text-destructive" size={20} />;
+               break;
+            case "completed":
+               icon = <CheckCircleIcon className="text-success" size={20} />;
+               break;
+         }
+         return (
+            <div className="flex items-center gap-x-2">
+               {icon}
+               {row.status}
+            </div>
+         );
+      },
    },
    {
       id: "created_at_time",
@@ -51,17 +66,17 @@ export const columns: UseTableColumn<Row>[] = [
       id: "actions",
       cellStyle: { width: 50 },
       cellClassName: "py-0",
-      cell: ({ row }) => (
-         <TableRowActions
-            actions={[
-               {
-                  label: "Delete",
-                  Icon: TrashIcon,
-                  iconClassName: "text-destructive",
-                  callback: () => console.log("delete: ", row.id),
-               },
-            ]}
-         />
-      ),
+      cell: () =>
+         "",
+         // <TableRowActions
+         //    actions={[
+         //       {
+         //          label: "Delete",
+         //          Icon: TrashIcon,
+         //          iconClassName: "text-destructive",
+         //          callback: () => console.log("delete: ", row.id),
+         //       },
+         //    ]}
+         // />
    },
 ];
