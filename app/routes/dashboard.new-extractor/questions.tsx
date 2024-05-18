@@ -15,10 +15,10 @@ import { useFieldArray, type UseFormReturn } from "react-hook-form";
 import { FormSchema } from "./route";
 import { genQuestion } from "./utils";
 
-interface Props {
+type Props = {
    form: UseFormReturn<FormSchema>;
    className?: string;
-}
+};
 
 export const FormQuestions = ({ form, className }: Props) => {
    const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -51,7 +51,9 @@ export const FormQuestions = ({ form, className }: Props) => {
             }
          }
       });
-      return () => subscription.unsubscribe();
+      return () => {
+         subscription.unsubscribe();
+      };
    }, [form]);
 
    return (

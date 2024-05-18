@@ -29,7 +29,7 @@ import { ActionFunctionArgs } from "@remix-run/node";
 // }
 
 export async function action({ request }: ActionFunctionArgs) {
-   const json = await request.json();
+   const json: unknown = await request.json();
    console.log("json:", json);
    return null;
 }

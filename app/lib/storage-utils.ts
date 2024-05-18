@@ -20,7 +20,8 @@ const SParsedObjectPath = z.object({
 });
 export function parseObjectPath(objectPath: string) {
    const [user_id, transcript_idAndFileExt] = objectPath.split("/");
-   const [transcript_id, fileExtension] = transcript_idAndFileExt!.split(".");
+   if (!transcript_idAndFileExt) throw Error("wrong file format");
+   const [transcript_id, fileExtension] = transcript_idAndFileExt.split(".");
    const parsedObj = SParsedObjectPath.parse({
       user_id,
       transcript_id,
