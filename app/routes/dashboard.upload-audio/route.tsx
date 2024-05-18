@@ -14,7 +14,7 @@ import { ENV } from "@/env";
 import { db } from "@/lib/db.server";
 import { generateObjectPath } from "@/lib/storage-utils";
 import { createServerClient } from "@/lib/supabase-server-client.server";
-import { extractorsTable, transcriptsTable } from "@/schemas/database";
+import { extractorJobsTable, extractorsTable, transcriptsTable } from "@/schemas/database";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
@@ -38,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
    // POST: Create transcript to start process
    if (request.method === "POST") {
       const json = await getFormFields<Omit<FormSchema, "audioFile">>(request);
-      const [inserted] = await db
+      const [insertedTranscript] = await db
          .insert(transcriptsTable)
          .values({
             name: json.name,
@@ -49,8 +49,22 @@ export async function action({ request }: ActionFunctionArgs) {
             updated_at: new Date().toISOString(),
          })
          .returning({ id: transcriptsTable.id });
-      if (!inserted) throw Error("failed to insert transcript");
-      return { transcriptId: inserted.id };
+      if (!insertedTranscript) throw Error("failed to insert transcript");
+
+      const [insertedJob] = await db
+         .insert(extractorJobsTable)
+         .values({
+            user_id: user.id,
+            status: "waiting",
+            extractor_id: json.extractorId,
+            transcript_id: insertedTranscript.id,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+         })
+         .returning({ id: transcriptsTable.id });
+      if (!insertedJob) throw Error("failed to insert extractor job");
+
+      return { transcriptId: insertedTranscript.id };
    }
 
    // DELETE: Delete transcript in case of file upload error
