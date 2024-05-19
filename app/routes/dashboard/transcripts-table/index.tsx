@@ -63,7 +63,7 @@ export const TranscriptsTable = ({ table, containerClassName, tableClassName }: 
                         {table.getIsExpanded(row.id) && (
                            <TableRow className="bg-secondary/30">
                               <TableCell colSpan={table.columns.length} className="p-0">
-                                 <ExtractorJobsTable extractorJobs={row.extractor_jobs} />
+                                 <ExtractorJobsTable transcriptId={row.id} />
                               </TableCell>
                            </TableRow>
                         )}
