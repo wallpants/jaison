@@ -1,4 +1,5 @@
 import { SelectExtractor } from "@/schemas/database";
+import { useLocation } from "@remix-run/react";
 import {
    LayoutDashboardIcon,
    LogOutIcon,
@@ -21,6 +22,8 @@ export type NavItemGroup = {
 };
 
 export const Sidebar = ({ extractors }: { extractors: SelectExtractor[] }) => {
+   const location = useLocation();
+
    const navItemGroups: NavItemGroup[] = useMemo(
       () => [
          {
@@ -28,7 +31,7 @@ export const Sidebar = ({ extractors }: { extractors: SelectExtractor[] }) => {
             items: [
                {
                   label: "Uploaded Audios",
-                  to: "/dashboard",
+                  to: "/dashboard/audios",
                   Icon: LayoutDashboardIcon,
                },
             ],
@@ -43,7 +46,7 @@ export const Sidebar = ({ extractors }: { extractors: SelectExtractor[] }) => {
                })) as NavItemGroup["items"]
             ).concat({
                label: "New Extractor",
-               to: "/dashboard/new-extractor",
+               to: location.pathname + "/new-extractor",
                Icon: PlusCircleIcon,
                iconClassName: "text-success",
             }),
@@ -59,7 +62,7 @@ export const Sidebar = ({ extractors }: { extractors: SelectExtractor[] }) => {
             ],
          },
       ],
-      [extractors],
+      [extractors, location.pathname],
    );
    return (
       <>
