@@ -3,9 +3,6 @@ import { Attempts, Monologue, Question, answersSchema } from "@/schemas/database
 import OpenAI from "openai";
 import { generateMainPrompt } from "./generate-prompt";
 
-type Model = "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
-
-const GPT_MODEL: Model = "gpt-3.5-turbo-16k";
 const openai = new OpenAI({
    apiKey: ENV.OPENAI_KEY,
 });
@@ -25,7 +22,7 @@ export async function submitQuestions(params: {
    };
 
    const chatCompletion = await openai.chat.completions.create({
-      model: GPT_MODEL,
+      model: "gpt-4-turbo",
       messages: attempt.messages,
    });
 
