@@ -14,7 +14,7 @@ import { createServerClient } from "@/lib/supabase-server-client.server";
 import { extractorJobsTable, extractorsTable } from "@/schemas/database";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigate } from "@remix-run/react";
+import { Outlet, useActionData, useLoaderData, useNavigate } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -87,30 +87,33 @@ export default function NewExtractorJobRoute() {
    }, [actionData?.success]);
 
    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-         <DialogContent className="w-[400px] max-w-[400px]">
-            <DialogHeader>
-               <DialogTitle>Extractor Job</DialogTitle>
-               <DialogDescription></DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-               <form
-                  className="grid grid-cols-2 gap-4"
-                  onSubmit={form.handleSubmit(submit, (err) => {
-                     console.log("formErrors: ", err);
-                  })}
-               >
-                  <FormExtractor
-                     form={form}
-                     extractors={loaderData.extractors}
-                     className="col-span-2"
-                  />
-                  <DialogFooter className="col-span-2">
-                     <Button>Continue</Button>
-                  </DialogFooter>
-               </form>
-            </Form>
-         </DialogContent>
-      </Dialog>
+      <>
+         <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="w-[400px] max-w-[400px]">
+               <DialogHeader>
+                  <DialogTitle>Extractor Job</DialogTitle>
+                  <DialogDescription></DialogDescription>
+               </DialogHeader>
+               <Form {...form}>
+                  <form
+                     className="grid grid-cols-2 gap-4"
+                     onSubmit={form.handleSubmit(submit, (err) => {
+                        console.log("formErrors: ", err);
+                     })}
+                  >
+                     <FormExtractor
+                        form={form}
+                        extractors={loaderData.extractors}
+                        className="col-span-2"
+                     />
+                     <DialogFooter className="col-span-2">
+                        <Button>Continue</Button>
+                     </DialogFooter>
+                  </form>
+               </Form>
+            </DialogContent>
+         </Dialog>
+         <Outlet />
+      </>
    );
 }
