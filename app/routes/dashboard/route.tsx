@@ -5,16 +5,17 @@ import { ENV } from "@/env";
 import { db } from "@/lib/db.server";
 import { createServerClient } from "@/lib/supabase-server-client.server";
 import { useTable } from "@/lib/use-table";
-import { LoaderFunctionArgs, SerializeFrom, redirect } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { Link, Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { User } from "@supabase/supabase-js";
 import { UploadIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useEventSource } from "remix-event-stream/browser";
+import { useEffect } from "react";
 import { TopBar } from "../_index/top-bar";
 import { Sidebar } from "./sidebar";
 import { TranscriptsTable } from "./transcripts-table";
 import { columns } from "./transcripts-table/columns";
+
+const POLL_INTERVAL = 7_000;
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
    // We pass in the user through context when calling this loader from sse route
@@ -33,7 +34,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
    });
 
    return {
-      user: user,
+      userEmail: user.email,
       transcripts,
       extractors,
       supabaseUrl: ENV.SUPABASE_URL,
@@ -42,26 +43,27 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export default function Dashboard() {
+   const fetcher = useFetcher();
    const loaderData = useLoaderData<typeof loader>();
-   const [data, setData] = useState(loaderData);
-   const sseData = useEventSource<SerializeFrom<typeof loader>>({ url: "/dashboard/sse" });
 
    useEffect(() => {
-      setData(loaderData);
-   }, [loaderData]);
+      const interval = setInterval(() => {
+         fetcher.load("/dashboard");
+      }, POLL_INTERVAL);
 
-   useEffect(() => {
-      sseData && setData(sseData);
-   }, [sseData]);
+      return () => {
+         clearInterval(interval);
+      };
+   }, [fetcher]);
 
    const table = useTable({
-      rows: data.transcripts,
+      rows: loaderData.transcripts,
       columns,
    });
 
    return (
       <div className="size-full">
-         <TopBar userEmail={loaderData.user.email} />
+         <TopBar userEmail={loaderData.userEmail} />
          <div className="flex h-full">
             <Sidebar extractors={loaderData.extractors} />
             <Main title="Uploaded Audios">
