@@ -3,27 +3,28 @@ import { useEffect, useState, type RefObject } from "react";
 
 interface Props {
    transcriptId: number;
+   objectId: string;
    audioRef: RefObject<HTMLAudioElement>;
    supabase: SupabaseClient;
    userId: string;
 }
 
-export const AudioPlayer = ({ transcriptId, audioRef, supabase, userId }: Props) => {
+export const AudioPlayer = ({ transcriptId, objectId, audioRef, supabase, userId }: Props) => {
    const [url, setUrl] = useState<string>();
 
    async function getAudioUrl() {
       const { data: files } = await supabase.storage.from("audios").list(userId, {
          search: String(transcriptId),
-         limit: 1,
+         limit: 100,
       });
 
-      console.log("files: ", files);
+      const file = files?.find((file) => file.id === objectId);
 
-      if (files?.[0]) {
+      if (file) {
          const EXPIRES_IN = 60 * 30; // 30 mins
          const { data } = await supabase.storage
             .from("audios")
-            .createSignedUrl(`${userId}/${files[0].name}`, EXPIRES_IN);
+            .createSignedUrl(`${userId}/${file.name}`, EXPIRES_IN);
          if (data) {
             setUrl(data.signedUrl);
          }
