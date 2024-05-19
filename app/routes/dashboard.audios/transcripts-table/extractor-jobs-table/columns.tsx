@@ -1,8 +1,25 @@
+import { TableRowActions } from "@/components/table-row-actions";
 import { UseTableColumn } from "@/lib/use-table";
-import { CheckCircleIcon, Disc3Icon, XCircleIcon } from "lucide-react";
+import { CheckCircleIcon, Disc3Icon, TrashIcon, XCircleIcon } from "lucide-react";
 import { Row as TranscriptsRow } from "../columns";
 
 export type Row = TranscriptsRow["extractor_jobs"][number];
+
+const ActionsCell = ({ row }: { row: Row }) => {
+   return (
+      <TableRowActions
+         disabled={!["completed", "failed"].includes(row.status)}
+         actions={[
+            {
+               label: "Delete",
+               Icon: TrashIcon,
+               iconClassName: "text-destructive",
+               callback: () => console.log("delete: ", row.id),
+            },
+         ]}
+      />
+   );
+};
 
 export const columns: UseTableColumn<Row>[] = [
    {
@@ -66,17 +83,6 @@ export const columns: UseTableColumn<Row>[] = [
       id: "actions",
       cellStyle: { width: 50 },
       cellClassName: "py-0",
-      cell: () =>
-         "",
-         // <TableRowActions
-         //    actions={[
-         //       {
-         //          label: "Delete",
-         //          Icon: TrashIcon,
-         //          iconClassName: "text-destructive",
-         //          callback: () => console.log("delete: ", row.id),
-         //       },
-         //    ]}
-         // />
+      cell: ActionsCell,
    },
 ];
