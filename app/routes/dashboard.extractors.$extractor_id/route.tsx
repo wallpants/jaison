@@ -7,12 +7,14 @@ import { createServerClient } from "@/lib/supabase-server-client.server";
 import { useTable } from "@/lib/use-table";
 import { extractorJobsTable, extractorsTable } from "@/schemas/database";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Outlet, useLoaderData, useSubmit } from "@remix-run/react";
+import { Outlet, useLoaderData, useRevalidator, useSubmit } from "@remix-run/react";
 import { and, desc, eq } from "drizzle-orm";
 import { TrashIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { z } from "zod";
 import { generateColumns } from "./columns";
+
+const POLL_INTERVAL = 10_000;
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
    const { supabase } = createServerClient(request);
@@ -42,6 +44,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function Extractor() {
+   const revalidator = useRevalidator();
    const loaderData = useLoaderData<typeof loader>();
    const submit = useSubmit();
 
@@ -59,6 +62,16 @@ export default function Extractor() {
          navigate: false,
       });
    }
+
+   useEffect(() => {
+      const interval = setInterval(() => {
+         revalidator.revalidate();
+      }, POLL_INTERVAL);
+
+      return () => {
+         clearInterval(interval);
+      };
+   }, [revalidator]);
 
    return (
       <>
