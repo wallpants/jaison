@@ -15,8 +15,16 @@ export const transcriptsTable = pgTable("transcripts", {
    status: text("status", { enum: TRANSCRIPT_STATUS }).notNull(),
    monologues: jsonb("monologues").$type<Monologue[]>(),
    revai_job_id: text("revai_job_id"),
-   created_at: timestamp("created_at", { precision: 0, mode: "string" }).notNull(),
-   updated_at: timestamp("updated_at", { precision: 0, mode: "string" }).notNull(),
+   created_at: timestamp("created_at", {
+      precision: 0,
+      withTimezone: true,
+      mode: "string",
+   }).notNull(),
+   updated_at: timestamp("updated_at", {
+      precision: 0,
+      withTimezone: true,
+      mode: "string",
+   }).notNull(),
 });
 
 export type SelectTranscript = typeof transcriptsTable.$inferSelect;

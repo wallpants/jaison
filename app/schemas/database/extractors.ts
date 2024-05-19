@@ -9,8 +9,16 @@ export const extractorsTable = pgTable("extractors", {
    user_id: text("user_id").notNull(),
    name: text("name").notNull(),
    questions: jsonb("questions").$type<Question[]>().notNull(),
-   created_at: timestamp("created_at", { precision: 0, mode: "string" }).notNull(),
-   updated_at: timestamp("updated_at", { precision: 0, mode: "string" }).notNull(),
+   created_at: timestamp("created_at", {
+      precision: 0,
+      withTimezone: true,
+      mode: "string",
+   }).notNull(),
+   updated_at: timestamp("updated_at", {
+      precision: 0,
+      withTimezone: true,
+      mode: "string",
+   }).notNull(),
 });
 
 export type SelectExtractor = typeof extractorsTable.$inferSelect;
