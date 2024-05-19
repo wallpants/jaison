@@ -27,8 +27,17 @@ export async function submitQuestions(params: {
    });
 
    try {
-      const responseContent =
+      let responseContent =
          chatCompletion.choices[0]?.message?.content ?? "no responseContent found";
+
+      if (responseContent.startsWith("```json")) {
+         // often gpt will wrap the response in
+         // ```json
+         // {response}
+         // ```
+         responseContent = responseContent.slice(7, -3);
+      }
+
       attempt.messages.push({ role: "assistant", content: responseContent });
       // sometimes gpt's response is not JSON parse-able and this throws
       const parsedContent: unknown = JSON.parse(responseContent);
