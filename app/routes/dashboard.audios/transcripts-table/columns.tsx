@@ -27,7 +27,7 @@ const ActionsCell = ({ row }: { row: Row }) => {
                label: "Extractor Job",
                Icon: PlusCircleIcon,
                iconClassName: "text-success",
-               callback: () => navigate(`new-extractor-job/${row.id}`),
+               callback: () => navigate(`${row.id}/new-extractor-job`),
             },
             {
                label: "Delete",
