@@ -1,10 +1,11 @@
+import { LoadingIndicator } from "@/components/loading-indicator";
 import { TableRowActions } from "@/components/table-row-actions";
 import { Button } from "@/components/ui/button";
 import { UseTableColumn } from "@/lib/use-table";
 import { SelectExtractor } from "@/schemas/database";
 import { SerializeFrom } from "@remix-run/node";
 import { Link, useSubmit } from "@remix-run/react";
-import { TrashIcon } from "lucide-react";
+import { TrashIcon, XCircleIcon } from "lucide-react";
 import { loader } from "./route";
 
 export type Row = SerializeFrom<typeof loader>["extractorJobs"][number];
@@ -14,7 +15,7 @@ const ActionsCell = ({ row }: { row: Row }) => {
 
    function handleDelete() {
       submit(null, {
-         action: `${row.id}/delete`,
+         action: `/dashboard/extractor-jobs/${row.id}/delete`,
          method: "post",
          navigate: false,
       });
@@ -42,7 +43,7 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
       cellStyle: { padding: 0 },
       cell: ({ row }) => (
          <Button variant="link" asChild>
-            <Link to={String(row.transcript_id)}>{row.transcript.name}</Link>
+            <Link to={`${row.transcript_id}/viewer`}>{row.transcript.name}</Link>
          </Button>
       ),
    },
@@ -51,7 +52,18 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
          ({
             id: question.tag,
             header: question.tag,
-            cell: ({ row }) => row.answers?.data.find((ans) => ans.tag === question.tag)?.answer,
+            cell: ({ row }) => {
+               if (row.status === "failed")
+                  return (
+                     <span className="flex items-center gap-x-2">
+                        <XCircleIcon size={18} className="text-destructive" />
+                     </span>
+                  );
+               if (row.status !== "completed") {
+                  return <LoadingIndicator size={18} />;
+               }
+               return row.answers?.data.find((ans) => ans.tag === question.tag)?.answer;
+            },
          }) satisfies UseTableColumn<Row>,
    ),
    {
