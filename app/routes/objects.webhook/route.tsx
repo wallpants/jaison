@@ -72,9 +72,12 @@ export async function action({ request }: ActionFunctionArgs) {
    const { transcript_id } = parseObjectPath(json.record.name);
 
    try {
-      const transcript = await db.query.transcriptsTable.findFirst({
-         where: eq(transcriptsTable.id, transcript_id),
-      });
+      const [transcript] = await db
+         .update(transcriptsTable)
+         .set({ object_id: json.record.id })
+         .where(eq(transcriptsTable.id, transcript_id))
+         .returning();
+
       if (!transcript) {
          throw new Response(`Unable to find transcript ${transcript_id}`, { status: 500 });
       }
