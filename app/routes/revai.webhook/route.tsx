@@ -1,9 +1,9 @@
 import { ENV } from "@/env";
 import { db } from "@/lib/db.server";
 import { generateMonologuesFromContent } from "@/lib/utils";
-import { transcriptsTable } from "@/schemas/database";
+import { extractorJobsTable, transcriptsTable } from "@/schemas/database";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { RevAiApiClient } from "revai-node-sdk";
 import { z } from "zod";
 
@@ -48,10 +48,25 @@ export async function action({ request }: ActionFunctionArgs) {
 
    const revaiClient = new RevAiApiClient(ENV.REVAI_KEY);
    const text = await revaiClient.getTranscriptText(json.job.id);
-   await db
+   const [transcript] = await db
       .update(transcriptsTable)
       .set({ status: "completed", monologues: generateMonologuesFromContent(text) })
-      .where(eq(transcriptsTable.revai_job_id, json.job.id));
+      .where(eq(transcriptsTable.revai_job_id, json.job.id))
+      .returning();
 
-   return null;
+   if (transcript) {
+      await db
+         .update(extractorJobsTable)
+         .set({ status: "started" })
+         .where(
+            and(
+               eq(extractorJobsTable.transcript_id, transcript.id),
+               eq(extractorJobsTable.status, "waiting"),
+            ),
+         );
+   }
+
+   return new Response("OKAY", {
+      status: 200,
+   });
 }
