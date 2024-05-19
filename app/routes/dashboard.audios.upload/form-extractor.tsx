@@ -37,6 +37,8 @@ export function FormExtractor<T extends { extractorId: number }>({
    );
 
    useEffect(() => {
+      // After creating a new extractor, new extractor_id is set in searchParams
+      // this allows us to autoselect the newly created extractor in this input
       const extractorId = searchParams.get("extractor_id");
       // @ts-expect-error extractorId is valid
       if (extractorId) form.setValue("extractorId", Number(extractorId));
