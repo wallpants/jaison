@@ -21,12 +21,12 @@ export async function submitQuestions(params: {
       messages: [{ role: "user", content: generateMainPrompt(params) }],
    };
 
-   const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
-      messages: attempt.messages,
-   });
-
    try {
+      const chatCompletion = await openai.chat.completions.create({
+         model: "gpt-4-turbo",
+         messages: attempt.messages,
+      });
+
       let responseContent =
          chatCompletion.choices[0]?.message?.content ?? "no responseContent found";
 
