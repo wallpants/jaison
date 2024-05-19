@@ -55,8 +55,8 @@ export async function action({ request }: ActionFunctionArgs) {
          updated_at: new Date().toISOString(),
       })
       .returning();
-   if (!inserted) throw new Error("Something went wrong creating the extractor");
-   return { success: true as const, inserted };
+   if (!inserted) throw Error("Something went wrong creating the extractor");
+   return { success: true, inserted };
 }
 
 export default function NewExtractorRoute() {
