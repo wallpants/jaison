@@ -1,11 +1,22 @@
 import { TableRowActions } from "@/components/table-row-actions";
 import { UseTableColumn } from "@/lib/use-table";
+import { useSubmit } from "@remix-run/react";
 import { CheckCircleIcon, Disc3Icon, TrashIcon, XCircleIcon } from "lucide-react";
 import { Row as TranscriptsRow } from "../columns";
 
 export type Row = TranscriptsRow["extractor_jobs"][number];
 
 const ActionsCell = ({ row }: { row: Row }) => {
+   const submit = useSubmit();
+
+   function handleDelete() {
+      submit(null, {
+         action: `/dashboard/extractor-jobs/${row.id}/delete`,
+         method: "post",
+         navigate: false,
+      });
+   }
+
    return (
       <TableRowActions
          disabled={!["completed", "failed"].includes(row.status)}
@@ -14,7 +25,7 @@ const ActionsCell = ({ row }: { row: Row }) => {
                label: "Delete",
                Icon: TrashIcon,
                iconClassName: "text-destructive",
-               callback: () => console.log("delete: ", row.id),
+               callback: handleDelete,
             },
          ]}
       />
