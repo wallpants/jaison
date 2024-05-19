@@ -4,10 +4,10 @@ import { AUTH_REDIRECT } from "@/consts";
 import { db } from "@/lib/db.server";
 import { createServerClient } from "@/lib/supabase-server-client.server";
 import { useTable } from "@/lib/use-table";
-import { transcriptsTable } from "@/schemas/database";
+import { extractorJobsTable, transcriptsTable } from "@/schemas/database";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useRevalidator } from "@remix-run/react";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { UploadIcon } from "lucide-react";
 import { useEffect } from "react";
 import { TranscriptsTable } from "./transcripts-table";
@@ -24,8 +24,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
    const transcripts = await db.query.transcriptsTable.findMany({
       where: eq(transcriptsTable.user_id, user.id),
+      orderBy: desc(transcriptsTable.created_at),
       with: {
          extractor_jobs: {
+            orderBy: desc(extractorJobsTable.created_at),
             columns: {
                id: true,
                created_at: true,
@@ -45,7 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
    return {
       userEmail: user.email,
-      transcripts,
+      transcripts: transcripts,
    };
 }
 

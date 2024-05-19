@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UseTableColumn } from "@/lib/use-table";
 import { cn } from "@/lib/utils";
 import { type SerializeFrom } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
+import { useNavigate, useSubmit } from "@remix-run/react";
 import {
    CheckCircleIcon,
    ChevronRightIcon,
@@ -18,6 +18,7 @@ export type Row = SerializeFrom<typeof loader>["transcripts"][number];
 
 const ActionsCell = ({ row }: { row: Row }) => {
    const navigate = useNavigate();
+   const submit = useSubmit();
 
    return (
       <TableRowActions
@@ -33,7 +34,12 @@ const ActionsCell = ({ row }: { row: Row }) => {
                label: "Delete",
                Icon: TrashIcon,
                iconClassName: "text-destructive",
-               callback: () => console.log("delete: ", row.id),
+               callback: () =>
+                  submit(null, {
+                     method: "post",
+                     action: `${row.id}/delete`,
+                     navigate: false,
+                  }),
             },
          ]}
       />
