@@ -9,6 +9,7 @@ import { LoaderFunctionArgs, SerializeFrom, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { User } from "@supabase/supabase-js";
 import { UploadIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useEventSource } from "remix-event-stream/browser";
 import { TopBar } from "../_index/top-bar";
 import { Sidebar } from "./sidebar";
@@ -42,10 +43,19 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
 export default function Dashboard() {
    const loaderData = useLoaderData<typeof loader>();
-   const sseLoaderData = useEventSource<SerializeFrom<typeof loader>>({ url: "/dashboard/sse" });
+   const [data, setData] = useState(loaderData);
+   const sseData = useEventSource<SerializeFrom<typeof loader>>({ url: "/dashboard/sse" });
+
+   useEffect(() => {
+      setData(loaderData);
+   }, [loaderData]);
+
+   useEffect(() => {
+      sseData && setData(sseData);
+   }, [sseData]);
 
    const table = useTable({
-      rows: sseLoaderData?.transcripts ?? loaderData.transcripts,
+      rows: data.transcripts,
       columns,
    });
 

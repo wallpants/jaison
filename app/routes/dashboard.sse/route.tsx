@@ -4,7 +4,7 @@ import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
 import { EventStream } from "remix-event-stream/server";
 import { loader as routeLoader } from "../dashboard/route";
 
-const SSE_INTERVAL = 5_000;
+const SSE_INTERVAL = 10_000;
 
 export async function loader({ request }: LoaderFunctionArgs) {
    const { supabase } = createServerClient(request);
