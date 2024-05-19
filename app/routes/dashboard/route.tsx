@@ -77,8 +77,6 @@ export default function Dashboard() {
       columns,
    });
 
-   console.log("loaderData: ", loaderData);
-
    return (
       <div className="size-full">
          <TopBar userEmail={loaderData.userEmail} />
