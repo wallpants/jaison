@@ -5,43 +5,47 @@ import { ENV } from "@/env";
 import { db } from "@/lib/db.server";
 import { createServerClient } from "@/lib/supabase-server-client.server";
 import { useTable } from "@/lib/use-table";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { LoaderFunctionArgs, SerializeFrom, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { User } from "@supabase/supabase-js";
 import { UploadIcon } from "lucide-react";
+import { useEventSource } from "remix-event-stream/browser";
 import { TopBar } from "../_index/top-bar";
 import { Sidebar } from "./sidebar";
 import { TranscriptsTable } from "./transcripts-table";
 import { columns } from "./transcripts-table/columns";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-   const { supabase, headers } = createServerClient(request);
-   const {
-      data: { user },
-   } = await supabase.auth.getUser();
-   if (!user) throw redirect(AUTH_REDIRECT);
+export async function loader({ request, context }: LoaderFunctionArgs) {
+   // We pass in the user through context when calling this loader from sse route
+   let user = context["user"] as User | null;
+   if (!user) {
+      const { supabase } = createServerClient(request);
+      ({
+         data: { user },
+      } = await supabase.auth.getUser());
+      if (!user) throw redirect(AUTH_REDIRECT);
+   }
 
    const extractors = await db.query.extractorsTable.findMany();
    const transcripts = await db.query.transcriptsTable.findMany({
       with: { extractor_jobs: { with: { extractor: true } } },
    });
 
-   return json(
-      {
-         user: user,
-         transcripts,
-         extractors,
-         supabaseUrl: ENV.SUPABASE_URL,
-         supabaseAnon: ENV.SUPABASE_ANON_KEY,
-      },
-      { headers },
-   );
+   return {
+      user: user,
+      transcripts,
+      extractors,
+      supabaseUrl: ENV.SUPABASE_URL,
+      supabaseAnon: ENV.SUPABASE_ANON_KEY,
+   };
 }
 
 export default function Dashboard() {
    const loaderData = useLoaderData<typeof loader>();
+   const sseLoaderData = useEventSource<SerializeFrom<typeof loader>>({ url: "/dashboard/sse" });
 
    const table = useTable({
-      rows: loaderData.transcripts,
+      rows: sseLoaderData?.transcripts ?? loaderData.transcripts,
       columns,
    });
 
