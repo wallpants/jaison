@@ -31,9 +31,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       })
       .parse(params);
 
-   console.log("extractor_job_id: ", extractor_job_id);
-   console.log("question_tag: ", question_tag);
-
    const transcript = await db.query.transcriptsTable.findFirst({
       where: and(eq(transcriptsTable.user_id, user.id), eq(transcriptsTable.id, transcript_id)),
    });
