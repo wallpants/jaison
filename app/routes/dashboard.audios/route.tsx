@@ -6,16 +6,15 @@ import { createServerClient } from "@/lib/supabase-server-client.server";
 import { useTable } from "@/lib/use-table";
 import { transcriptsTable } from "@/schemas/database";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useRevalidator } from "@remix-run/react";
 import { User } from "@supabase/supabase-js";
 import { eq } from "drizzle-orm";
 import { UploadIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useEventSource } from "remix-event-stream/browser";
+import { useEffect } from "react";
 import { TranscriptsTable } from "./transcripts-table";
 import { columns } from "./transcripts-table/columns";
 
-// const POLL_INTERVAL = 7_000;
+const POLL_INTERVAL = 10_000;
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
    // "user" passed in "context" from sseRoute
@@ -56,31 +55,21 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export default function UploadedAudios() {
-   // const revalidator = useRevalidator();
+   const revalidator = useRevalidator();
    const loaderData = useLoaderData<typeof loader>();
-   const sseData = useEventSource<typeof loaderData>({ url: "/dashboard/audios/sse" });
-   const [serverData, setServerData] = useState(loaderData);
 
    useEffect(() => {
-      setServerData(loaderData);
-   }, [loaderData]);
+      const interval = setInterval(() => {
+         revalidator.revalidate();
+      }, POLL_INTERVAL);
 
-   useEffect(() => {
-      sseData && setServerData(sseData);
-   }, [sseData]);
-
-   // useEffect(() => {
-   //    const interval = setInterval(() => {
-   //       revalidator.revalidate();
-   //    }, POLL_INTERVAL);
-
-   //    return () => {
-   //       clearInterval(interval);
-   //    };
-   // }, [revalidator]);
+      return () => {
+         clearInterval(interval);
+      };
+   }, [revalidator]);
 
    const table = useTable({
-      rows: serverData.transcripts,
+      rows: loaderData.transcripts,
       columns,
    });
 
