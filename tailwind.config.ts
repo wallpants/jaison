@@ -38,8 +38,8 @@ export default {
                foreground: color("tomato-1"),
             },
             muted: {
-               DEFAULT: color("mauve-3"),
-               foreground: color("mauve-12"),
+               DEFAULT: color("mauve-2"),
+               foreground: color("mauve-10"),
             },
             accent: {
                DEFAULT: color("violet-6"),

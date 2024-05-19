@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UseTableColumn } from "@/lib/use-table";
 import { cn } from "@/lib/utils";
 import { type SerializeFrom } from "@remix-run/node";
-import { Link, useNavigate, useSubmit } from "@remix-run/react";
+import { useNavigate, useSubmit } from "@remix-run/react";
 import {
    CheckCircleIcon,
    ChevronRightIcon,
@@ -71,12 +71,7 @@ export const columns: UseTableColumn<Row>[] = [
       id: "name",
       header: "Name",
       headerStyle: { width: 200 },
-      cellStyle: { padding: 0 },
-      cell: ({ row }) => (
-         <Button variant="link" className="group-hover:underline" asChild>
-            <Link to={`${row.id}/viewer`}>{row.name}</Link>
-         </Button>
-      ),
+      cell: ({ row }) => row.name,
    },
    {
       id: "status",

@@ -40,29 +40,33 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
    {
       id: "transcript",
       header: "Audio",
-      cellStyle: { padding: 0 },
-      cell: ({ row }) => (
-         <Button variant="link" asChild>
-            <Link to={`${row.transcript_id}/viewer`}>{row.transcript.name}</Link>
-         </Button>
-      ),
+      cell: ({ row: extractorJob }) => extractorJob.transcript.name,
    },
    ...extractor.questions.map(
       (question) =>
          ({
             id: question.tag,
             header: question.tag,
-            cell: ({ row }) => {
-               if (row.status === "failed")
+            cellStyle: { padding: 0 },
+            cell: ({ row: extractorJob }) => {
+               if (extractorJob.status === "failed")
                   return (
                      <span className="flex items-center gap-x-2">
                         <XCircleIcon size={18} className="text-destructive" />
                      </span>
                   );
-               if (row.status !== "completed") {
+               if (extractorJob.status !== "completed") {
                   return <LoadingIndicator size={18} />;
                }
-               return row.answers?.data.find((ans) => ans.tag === question.tag)?.answer;
+               return (
+                  <Button variant="link" className="h-fit text-wrap" asChild>
+                     <Link
+                        to={`transcript/${extractorJob.transcript_id}/${extractorJob.id}/${question.tag}`}
+                     >
+                        {extractorJob.answers?.data.find((ans) => ans.tag === question.tag)?.answer}
+                     </Link>
+                  </Button>
+               );
             },
          }) satisfies UseTableColumn<Row>,
    ),
