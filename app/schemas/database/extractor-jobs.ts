@@ -19,8 +19,16 @@ export const extractorJobsTable = pgTable("extractor_jobs", {
    status: text("status", { enum: EXTRACTOR_JOB_STATUS }).notNull(),
    answers: jsonb("answers").$type<Answers>(),
    attempts: jsonb("attempts").$type<Attempts>(),
-   created_at: timestamp("created_at", { precision: 0, mode: "string" }).notNull(),
-   updated_at: timestamp("updated_at", { precision: 0, mode: "string" }).notNull(),
+   created_at: timestamp("created_at", {
+      precision: 0,
+      withTimezone: true,
+      mode: "string",
+   }).notNull(),
+   updated_at: timestamp("updated_at", {
+      precision: 0,
+      withTimezone: true,
+      mode: "string",
+   }).notNull(),
 });
 
 export type SelectExtractorJob = typeof extractorJobsTable.$inferSelect;
