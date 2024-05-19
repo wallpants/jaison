@@ -1,26 +1,42 @@
 import { TableRowActions } from "@/components/table-row-actions";
 import { Button } from "@/components/ui/button";
-import { UseTable, UseTableColumn } from "@/lib/use-table";
+import { UseTableColumn } from "@/lib/use-table";
 import { cn } from "@/lib/utils";
 import { type SerializeFrom } from "@remix-run/node";
-import { CheckCircleIcon, ChevronRightIcon, Disc3Icon, TrashIcon, XCircleIcon } from "lucide-react";
+import { useNavigate } from "@remix-run/react";
+import {
+   CheckCircleIcon,
+   ChevronRightIcon,
+   Disc3Icon,
+   PlusCircleIcon,
+   TrashIcon,
+   XCircleIcon,
+} from "lucide-react";
 import { type loader } from "../route";
 
 export type Row = SerializeFrom<typeof loader>["transcripts"][number];
 
-const CellExpand = ({ row, table }: { row: Row; table: UseTable<Row> }) => {
-   const isExpanded = table.getIsExpanded(row.id);
+const ActionsCell = ({ row }: { row: Row }) => {
+   const navigate = useNavigate();
+
    return (
-      <Button
-         variant="ghost"
-         className="size-8 p-0 group-hover:border-primary group-hover:enabled:border"
-         onClick={() => table.setIsExpanded(row.id, (expanded) => !expanded)}
-      >
-         <ChevronRightIcon
-            className={cn("size-4 transition-transform", isExpanded && "rotate-90")}
-         />
-         <span className="sr-only">{isExpanded ? "Collapse" : "Expand"}</span>
-      </Button>
+      <TableRowActions
+         disabled={!["completed", "failed"].includes(row.status)}
+         actions={[
+            {
+               label: "Extractor Job",
+               Icon: PlusCircleIcon,
+               iconClassName: "text-success",
+               callback: () => navigate(`new-extractor-job/${row.id}`),
+            },
+            {
+               label: "Delete",
+               Icon: TrashIcon,
+               iconClassName: "text-destructive",
+               callback: () => console.log("delete: ", row.id),
+            },
+         ]}
+      />
    );
 };
 
@@ -28,7 +44,21 @@ export const columns: UseTableColumn<Row>[] = [
    {
       id: "expand",
       headerStyle: { width: 60 },
-      cell: CellExpand,
+      cell: ({ row, table }) => {
+         const isExpanded = table.getIsExpanded(row.id);
+         return (
+            <Button
+               variant="ghost"
+               className="size-8 p-0 group-hover:border-primary group-hover:enabled:border"
+               onClick={() => table.setIsExpanded(row.id, (expanded) => !expanded)}
+            >
+               <ChevronRightIcon
+                  className={cn("size-4 transition-transform", isExpanded && "rotate-90")}
+               />
+               <span className="sr-only">{isExpanded ? "Collapse" : "Expand"}</span>
+            </Button>
+         );
+      },
       cellClassName: "py-0",
    },
    {
@@ -87,18 +117,6 @@ export const columns: UseTableColumn<Row>[] = [
       id: "actions",
       headerStyle: { width: 50 },
       cellClassName: "py-0",
-      cell: ({ row }) => (
-         <TableRowActions
-            disabled={!["completed", "failed"].includes(row.status)}
-            actions={[
-               {
-                  label: "Delete",
-                  Icon: TrashIcon,
-                  iconClassName: "text-destructive",
-                  callback: () => console.log("delete: ", row.id),
-               },
-            ]}
-         />
-      ),
+      cell: ActionsCell,
    },
 ];

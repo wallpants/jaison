@@ -10,10 +10,9 @@ import {
 import { SelectExtractor } from "@/schemas/database";
 import { useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { FormSchema } from "./schema";
 
 type Props = {
-   form: UseFormReturn<FormSchema>;
+   form: UseFormReturn<{ extractorId: number }>;
    extractors: SelectExtractor[];
    className?: string;
 };
