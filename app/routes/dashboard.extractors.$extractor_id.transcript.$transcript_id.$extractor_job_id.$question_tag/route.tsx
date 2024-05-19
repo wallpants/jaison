@@ -173,12 +173,15 @@ export default function TranscriptDialog() {
                         <span className="sr-only">Go to next source</span>
                         <ChevronRightIcon className="size-4" />
                      </Button>
-                     <AudioPlayer
-                        transcriptId={loaderData.transcript.id}
-                        audioRef={audioRef}
-                        supabase={supabase}
-                        userId={loaderData.userId}
-                     />
+                     {loaderData.transcript.object_id && (
+                        <AudioPlayer
+                           transcriptId={loaderData.transcript.id}
+                           objectId={loaderData.transcript.object_id}
+                           audioRef={audioRef}
+                           supabase={supabase}
+                           userId={loaderData.userId}
+                        />
+                     )}
                   </div>
                </div>
             </DialogHeader>
