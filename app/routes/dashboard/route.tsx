@@ -30,7 +30,23 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
    const extractors = await db.query.extractorsTable.findMany();
    const transcripts = await db.query.transcriptsTable.findMany({
-      with: { extractor_jobs: { with: { extractor: true } } },
+      with: {
+         extractor_jobs: {
+            columns: {
+               id: true,
+               created_at: true,
+               status: true,
+            },
+            with: {
+               extractor: {
+                  columns: {
+                     name: true,
+                  },
+               },
+            },
+         },
+      },
+      columns: { id: true, name: true, status: true, created_at: true },
    });
 
    return {
