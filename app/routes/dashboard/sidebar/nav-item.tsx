@@ -21,7 +21,7 @@ export const NavItem = ({
       to={to}
       className={({ isActive }) =>
          cn(
-            "mx-4 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-accent-foreground transition-all hover:bg-accent/50",
+            "mx-4 mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-accent-foreground transition-all hover:bg-accent/50",
             isActive && "bg-accent/50",
          )
       }
