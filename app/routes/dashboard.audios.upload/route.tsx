@@ -159,11 +159,7 @@ export default function UploadAudio() {
    }, [actionData]);
 
    useEffect(() => {
-      if (!open) {
-         setTimeout(() => {
-            navigate("..");
-         }, 100);
-      }
+      if (!open) setTimeout(() => navigate(".."), 100);
    }, [navigate, open]);
 
    return (

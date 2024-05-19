@@ -1,8 +1,9 @@
 import { TableRowActions } from "@/components/table-row-actions";
+import { Button } from "@/components/ui/button";
 import { UseTableColumn } from "@/lib/use-table";
 import { SelectExtractor } from "@/schemas/database";
 import { SerializeFrom } from "@remix-run/node";
-import { useSubmit } from "@remix-run/react";
+import { Link, useSubmit } from "@remix-run/react";
 import { TrashIcon } from "lucide-react";
 import { loader } from "./route";
 
@@ -38,7 +39,12 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
    {
       id: "transcript",
       header: "Audio",
-      cell: ({ row }) => row.transcript.name,
+      cellStyle: { padding: 0 },
+      cell: ({ row }) => (
+         <Button variant="link" asChild>
+            <Link to={String(row.transcript_id)}>{row.transcript.name}</Link>
+         </Button>
+      ),
    },
    ...extractor.questions.map(
       (question) =>

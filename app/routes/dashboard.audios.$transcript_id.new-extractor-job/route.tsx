@@ -80,7 +80,7 @@ export default function NewExtractorJobRoute() {
 
    useEffect(() => {
       if (!open) setTimeout(() => navigate(".."), 100);
-   }, [actionData, navigate, open]);
+   }, [navigate, open]);
 
    useEffect(() => {
       actionData?.success && setOpen(false);
