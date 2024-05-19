@@ -7,7 +7,6 @@ import { useTable } from "@/lib/use-table";
 import { transcriptsTable } from "@/schemas/database";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useRevalidator } from "@remix-run/react";
-import { User } from "@supabase/supabase-js";
 import { eq } from "drizzle-orm";
 import { UploadIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -16,16 +15,12 @@ import { columns } from "./transcripts-table/columns";
 
 const POLL_INTERVAL = 10_000;
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
-   // "user" passed in "context" from sseRoute
-   let user = context["user"] as User | null;
-   if (!user) {
-      const { supabase } = createServerClient(request);
-      ({
-         data: { user },
-      } = await supabase.auth.getUser());
-      if (!user) throw redirect(AUTH_REDIRECT);
-   }
+export async function loader({ request }: LoaderFunctionArgs) {
+   const { supabase } = createServerClient(request);
+   const {
+      data: { user },
+   } = await supabase.auth.getUser();
+   if (!user) throw redirect(AUTH_REDIRECT);
 
    const transcripts = await db.query.transcriptsTable.findMany({
       where: eq(transcriptsTable.user_id, user.id),
