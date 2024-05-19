@@ -8,16 +8,25 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 import { SelectExtractor } from "@/schemas/database";
-import { useMemo } from "react";
+import { useNavigate, useSearchParams } from "@remix-run/react";
+import { PlusCircleIcon } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-type Props = {
-   form: UseFormReturn<{ extractorId: number }>;
+type Props<T extends { extractorId: number }> = {
+   form: UseFormReturn<T>;
    extractors: SelectExtractor[];
    className?: string;
 };
 
-export function FormExtractor({ form, extractors, className }: Props) {
+export function FormExtractor<T extends { extractorId: number }>({
+   form,
+   extractors,
+   className,
+}: Props<T>) {
+   const navigate = useNavigate();
+   const [searchParams] = useSearchParams();
+
    const options: ComboboxOption[] = useMemo(
       () =>
          extractors.map((e) => ({
@@ -27,8 +36,15 @@ export function FormExtractor({ form, extractors, className }: Props) {
       [extractors],
    );
 
+   useEffect(() => {
+      const extractorId = searchParams.get("extractor_id");
+      // @ts-expect-error extractorId is valid
+      if (extractorId) form.setValue("extractorId", Number(extractorId));
+   }, [form, searchParams]);
+
    return (
       <FormField
+         // @ts-expect-error extractorId is valid
          name="extractorId"
          control={form.control}
          render={({ field }) => (
@@ -43,6 +59,12 @@ export function FormExtractor({ form, extractors, className }: Props) {
                      className={className}
                      value={String(field.value)}
                      onValueChange={field.onChange}
+                     lastOption={{
+                        label: "New Extractor",
+                        onClick: () => navigate("new-extractor"),
+                        Icon: PlusCircleIcon,
+                        iconClassName: "text-success",
+                     }}
                   />
                </FormControl>
                <FormMessage />

@@ -6,10 +6,11 @@ import {
    CommandInput,
    CommandItem,
    CommandList,
+   CommandSeparator,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, LucideIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
 export type ComboboxOption = {
@@ -24,6 +25,12 @@ type Props = {
    className?: string | undefined;
    value: string;
    onValueChange: (value: string) => void;
+   lastOption?: {
+      label: string;
+      Icon?: LucideIcon;
+      iconClassName?: string;
+      onClick: () => void;
+   };
 };
 
 export const Combobox = ({
@@ -33,6 +40,7 @@ export const Combobox = ({
    className,
    value,
    onValueChange,
+   lastOption,
 }: Props) => {
    const buttonRef = useRef<HTMLButtonElement>(null);
    const [open, setOpen] = useState(false);
@@ -80,6 +88,29 @@ export const Combobox = ({
                      ))}
                   </CommandList>
                </CommandGroup>
+               {lastOption && (
+                  <>
+                     <CommandSeparator />
+                     <CommandGroup>
+                        <CommandList>
+                           <CommandItem
+                              className="justify-center"
+                              onSelect={() => {
+                                 lastOption.onClick();
+                                 setOpen(false);
+                              }}
+                           >
+                              {lastOption.Icon && (
+                                 <lastOption.Icon
+                                    className={cn("mr-2 size-4", lastOption.iconClassName)}
+                                 />
+                              )}
+                              {lastOption.label}
+                           </CommandItem>
+                        </CommandList>
+                     </CommandGroup>
+                  </>
+               )}
             </Command>
          </PopoverContent>
       </Popover>

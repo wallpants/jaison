@@ -17,7 +17,7 @@ import { createServerClient } from "@/lib/supabase-server-client.server";
 import { extractorJobsTable, extractorsTable, transcriptsTable } from "@/schemas/database";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
+import { Outlet, useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
@@ -167,43 +167,46 @@ export default function UploadAudio() {
    }, [navigate, open]);
 
    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-         <DialogContent>
-            <DialogHeader>
-               <DialogTitle>Upload Audio</DialogTitle>
-               <DialogDescription>
-                  Upload an audio file and select an extractor to process it.
-               </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-               <form
-                  className="grid grid-cols-2 gap-4"
-                  onSubmit={form.handleSubmit(onSubmit, (err) => {
-                     console.log("formErrors:", err);
-                  })}
-               >
-                  <FormName form={form} />
-                  <FormLanguage form={form} className="ml-10" />
-                  <FormExtractor
-                     form={form}
-                     extractors={loaderData.extractors}
-                     className="col-span-2"
-                  />
-                  <FormFile
-                     form={form}
-                     isValidatingAudioFile={isValidatingAudioFile}
-                     setIsValidatingAudioFile={setIsValidatingAudioFile}
-                  />
-                  <FormField name="root" render={() => <FormMessage />} />
+      <>
+         <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent>
+               <DialogHeader>
+                  <DialogTitle>Upload Audio</DialogTitle>
+                  <DialogDescription>
+                     Upload an audio file and select an extractor to process it.
+                  </DialogDescription>
+               </DialogHeader>
+               <Form {...form}>
+                  <form
+                     className="grid grid-cols-2 gap-4"
+                     onSubmit={form.handleSubmit(onSubmit, (err) => {
+                        console.log("formErrors:", err);
+                     })}
+                  >
+                     <FormName form={form} />
+                     <FormLanguage form={form} className="ml-10" />
+                     <FormExtractor
+                        form={form}
+                        extractors={loaderData.extractors}
+                        className="col-span-2"
+                     />
+                     <FormFile
+                        form={form}
+                        isValidatingAudioFile={isValidatingAudioFile}
+                        setIsValidatingAudioFile={setIsValidatingAudioFile}
+                     />
+                     <FormField name="root" render={() => <FormMessage />} />
 
-                  <DialogFooter className="col-span-2">
-                     <Button disabled={isProcessing} className="w-20">
-                        {isProcessing ? <LoadingIndicator /> : "Continue"}
-                     </Button>
-                  </DialogFooter>
-               </form>
-            </Form>
-         </DialogContent>
-      </Dialog>
+                     <DialogFooter className="col-span-2">
+                        <Button disabled={isProcessing} className="w-20">
+                           {isProcessing ? <LoadingIndicator /> : "Continue"}
+                        </Button>
+                     </DialogFooter>
+                  </form>
+               </Form>
+            </DialogContent>
+         </Dialog>
+         <Outlet />
+      </>
    );
 }
