@@ -49,7 +49,6 @@ const payloadSchema = z.object({
 
 export async function action({ request }: ActionFunctionArgs) {
    const json = payloadSchema.parse(await request.json());
-   console.log("json: ", json);
    const host = request.headers.get("host");
 
    if (json.record.bucket_id !== "audios") {
@@ -73,7 +72,6 @@ export async function action({ request }: ActionFunctionArgs) {
    const { transcript_id } = parseObjectPath(json.record.name);
 
    try {
-      console.log("try");
       const transcript = await db.query.transcriptsTable.findFirst({
          where: eq(transcriptsTable.id, transcript_id),
       });
@@ -103,7 +101,6 @@ export async function action({ request }: ActionFunctionArgs) {
          transcriber: "machine",
          language: transcript.language,
       });
-      console.log("here2");
 
       // save job id in transcript
       await db
@@ -111,12 +108,10 @@ export async function action({ request }: ActionFunctionArgs) {
          .set({ revai_job_id: job.id, status: "started" })
          .where(eq(transcriptsTable.id, transcript_id));
 
-      console.log("here3");
       return new Response("OK", {
          status: 200,
       });
    } catch (error: unknown) {
-      console.log("here4");
       return new Response((error as Error).message, {
          status: 500,
       });

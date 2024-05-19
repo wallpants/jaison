@@ -6,6 +6,8 @@ export const ENV = z
 
       REVAI_KEY: z.string().min(1),
 
+      OPENAI_KEY: z.string().min(1),
+
       SUPABASE_ANON_KEY: z.string().min(1),
       SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
       SUPABASE_URL: z.string().min(1),
