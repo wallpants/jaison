@@ -47,7 +47,7 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
          ({
             id: question.tag,
             header: question.tag,
-            cellStyle: { padding: 0 },
+            cellClassName: "py-0",
             cell: ({ row: extractorJob }) => {
                if (extractorJob.status === "failed")
                   return (

@@ -55,7 +55,7 @@ export const Sidebar = ({ extractors }: { extractors: SelectExtractor[] }) => {
             label: "User",
             items: [
                {
-                  label: "Lougout",
+                  label: "Logout",
                   to: "/logout",
                   Icon: LogOutIcon,
                },
