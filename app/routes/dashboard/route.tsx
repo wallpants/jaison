@@ -6,7 +6,7 @@ import { db } from "@/lib/db.server";
 import { createServerClient } from "@/lib/supabase-server-client.server";
 import { useTable } from "@/lib/use-table";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, Outlet, useFetcher, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useRevalidator } from "@remix-run/react";
 import { User } from "@supabase/supabase-js";
 import { UploadIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -59,23 +59,25 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export default function Dashboard() {
-   const fetcher = useFetcher();
+   const revalidator = useRevalidator();
    const loaderData = useLoaderData<typeof loader>();
 
    useEffect(() => {
       const interval = setInterval(() => {
-         fetcher.load("/dashboard");
+         revalidator.revalidate();
       }, POLL_INTERVAL);
 
       return () => {
          clearInterval(interval);
       };
-   }, [fetcher]);
+   }, [revalidator]);
 
    const table = useTable({
       rows: loaderData.transcripts,
       columns,
    });
+
+   console.log("loaderData: ", loaderData);
 
    return (
       <div className="size-full">
