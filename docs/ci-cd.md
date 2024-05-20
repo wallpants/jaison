@@ -1,4 +1,20 @@
-# GitHub Workflow
+[👈 README.md](../README.md)
+
+# CI-CD
+
+## Database
+
+There's a [Github Action](/.github/workflows/migrate-production.yml) that applies
+any pending migrations on push to `main` for _production_ or on manual trigger.
+There's another Github Action that handles the same for _staging_ on push to the
+`staging` branch.
+
+## Remix App
+
+Remix App is deployed to [DigitalOcean's App Platform](https://www.digitalocean.com/products/app-platform),
+which handles re-deploying on push to linked branch.
+
+## GitHub Workflow
 
 This is the workflow to follow to have `main` as the _production_ environment,
 `staging` as the _staging_ environment.
