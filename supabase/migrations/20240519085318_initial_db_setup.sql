@@ -190,6 +190,8 @@ RESET ALL;
 
 CREATE OR REPLACE TRIGGER "insert_object" AFTER INSERT ON "storage"."objects" FOR EACH ROW EXECUTE FUNCTION "supabase_functions"."http_request"('http://host.docker.internal:5173/objects/webhook', 'POST', '{"Content-Type":"application/json"}', '{}', '5000');
 
+INSERT INTO storage.buckets (id, name, public) VALUES ('audios', 'audios', false);
+
 CREATE POLICY "Give users access to own folder 1brjcyl_0" ON "storage"."objects" FOR SELECT USING ((("bucket_id" = 'audios'::"text") AND (( SELECT ("auth"."uid"())::"text" AS "uid") = ("storage"."foldername"("name"))[1])));
 
 CREATE POLICY "Give users access to own folder 1brjcyl_1" ON "storage"."objects" FOR INSERT WITH CHECK ((("bucket_id" = 'audios'::"text") AND (( SELECT ("auth"."uid"())::"text" AS "uid") = ("storage"."foldername"("name"))[1])));

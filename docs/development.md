@@ -1,3 +1,5 @@
+[👈 README.md](../README.md)
+
 # Development
 
 ## ✅ Requirements
@@ -9,6 +11,12 @@
 ## 👷 Configure Environments
 
 ### Local Development
+
+There are certain restrictions when working in a local environment. Haven't found
+a way to make files uploaded to Supabase's Storage available to outside services,
+meaning we can't send the audio files to _rev.ai_.
+
+Deploy to a _staging_ environment to test the entire workflow.
 
 1. Start local **supabase**:
 
@@ -28,23 +36,6 @@
    bun dev
    ```
 
-### Staging
-
-1. Create new Supabase Project in Dashboard
-
-2. Create `staging` environment in GitHub repo Settings and configure any required
-   _variables_ and _secrets_. Take a look at [github workflows](./.github/workflows/)
-   to see what's needed.
-
-3. Create new [App Platform](https://www.digitalocean.com/products/app-platform)
-   project and link to GitHub repo `staging` branch for automatic deployments.
-   Setup required _environment variables_. Take a look at [.env.example](./.env.example)
-   to see what's needed.
-
-### Production
-
-Repeat **Staging** steps whilst changing variables where needed.
-
 ## Database
 
 ### New Tables
@@ -61,15 +52,11 @@ You can get [Database Webhooks](https://supabase.com/docs/guides/database/webhoo
 working locally by pointing to `host.docker.internal` instead of `localhost` in
 Supabase Dashboard.
 
-```sh
-bun dev --host
-```
-
-<img src="./docs/database_webhooks.png" alt="database webhooks"/>
+<img src="/docs/update-webhooks-urls.png" />
 
 ### Seed
 
-Run [seed scripts](./drizzle/seed/):
+Run [seed scripts](/drizzle/seed/):
 
 ```sh
 bun drizzle:seed
@@ -80,7 +67,7 @@ Remote databases can also be seeded by updating `.env` to point to them.
 ### Local Schema Changes
 
 You can do quick database schema iterations by modifying the
-[schema files](./app/schemas/database/) and running the command:
+[schema files](/app/schemas/database/) and running the command:
 
 ```sh
 bun drizzle:push
@@ -104,11 +91,9 @@ a GitHub action.
 
 ## Authentication
 
-We're doing PKCE (Proff Key for Code Exchange) because we're doing server rendering.
+We're doing PKCE (Proof Key for Code Exchange) because we're doing server rendering.
 Default email templates from supabase [don't work](https://supabase.com/docs/guides/auth/auth-email-templates#redirecting-the-user-to-a-server-side-endpoint).
 
-For local development update templates at [/supabase/templates](./supabase/templates/).
-Don't forget to update [/supabase/config.toml](./supabase/config.toml) to declare
+For local development update templates at [/supabase/templates](/supabase/templates/).
+Don't forget to update [/supabase/config.toml](/supabase/config.toml) to declare
 template overrides.
-
-For remote environments, update templates at [Supabase Dashboard Email Templates](https://supabase.com/dashboard/project/_/auth/templates).
