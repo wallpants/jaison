@@ -61,7 +61,7 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
                   return <LoadingIndicator size={18} />;
                }
                return (
-                  <Button variant="link" className="h-fit text-wrap" asChild>
+                  <Button variant="link" className="h-fit text-wrap px-0" asChild>
                      <Link
                         to={`transcript/${extractorJob.transcript_id}/${extractorJob.id}/${question.tag}`}
                      >
