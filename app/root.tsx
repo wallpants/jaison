@@ -1,10 +1,13 @@
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction, MetaFunction } from "@remix-run/node";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import { ThemeProvider } from "next-themes";
 import globalCss from "./global.css?url";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: globalCss, as: "style" }];
 
+export const meta: MetaFunction = () => {
+   return [{ title: "JAISON" }, { name: "description", content: "Welcome to jaison!" }];
+};
 export function Layout({ children }: { children: React.ReactNode }) {
    return (
       <html lang="en" suppressHydrationWarning>
