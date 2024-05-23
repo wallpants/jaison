@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { TopBar } from "./top-bar";
 
 export const meta: MetaFunction = () => {
-   return [{ title: "New Remix App" }, { name: "description", content: "Welcome to Remix!" }];
+   return [{ title: "JAISON" }, { name: "description", content: "Welcome to jaison!" }];
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
