@@ -39,6 +39,7 @@ const ActionsCell = ({ row }: { row: Row }) => {
 export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>[] => [
    {
       id: "transcript",
+      headerStyle: { width: 180 },
       header: "Audio",
       cell: ({ row: extractorJob }) => extractorJob.transcript.name,
    },
@@ -46,8 +47,9 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
       (question) =>
          ({
             id: question.tag,
+            headerStyle: { width: 200 },
             header: question.tag,
-            cellStyle: { padding: 0 },
+            cellClassName: "py-0",
             cell: ({ row: extractorJob }) => {
                if (extractorJob.status === "failed")
                   return (
@@ -72,6 +74,7 @@ export const generateColumns = (extractor: SelectExtractor): UseTableColumn<Row>
    ),
    {
       id: "actions",
+      headerStyle: { width: 100 },
       cellClassName: "py-0",
       cell: ActionsCell,
    },
