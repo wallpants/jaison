@@ -6,10 +6,12 @@ This project is a proof of concept.
 
 ## Workflow
 
-1. Define _extractors_, which basically means specifying JSON columns
-   and prompts to fill those columns with.
+1. Define _extractors_, which basically means specifying JSON keys
+   and prompts to fill those keys with.
 2. Upload an audio file and choose an _extractor_.
 3. Receive JSON at your webhook of choice. (not implemented)
+
+https://github.com/wallpants/jaison/assets/47203170/59fbfe24-71ae-406f-81f7-b84de9451ec9
 
 ## Behind the Scenes
 
