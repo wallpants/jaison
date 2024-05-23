@@ -11,8 +11,8 @@
 
 ---
 
-3. Update email templates on [Supabase Email Templates](ttps://supabase.com/dashboard/project/_/auth/templates)
-   with contents from [supabase/templates](/supabase/templates). This is required
+3. Update email templates on [Supabase Email Templates](https://supabase.com/dashboard/project/_/auth/templates)
+   with contents from [supabase/templates](/supabase/templates/). This is required
    because we're doing PKCE since we're server rendering. Default email templates
    from supabase [don't work](https://supabase.com/docs/guides/auth/auth-email-templates#redirecting-the-user-to-a-server-side-endpoint).
    <img src="/docs/email-templates.png" />
