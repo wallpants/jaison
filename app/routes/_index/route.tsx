@@ -1,11 +1,7 @@
 import { createServerClient } from "@/lib/supabase-server-client.server";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { TopBar } from "./top-bar";
-
-export const meta: MetaFunction = () => {
-   return [{ title: "JAISON" }, { name: "description", content: "Welcome to jaison!" }];
-};
 
 export async function loader({ request }: LoaderFunctionArgs) {
    const { supabase } = createServerClient(request);
