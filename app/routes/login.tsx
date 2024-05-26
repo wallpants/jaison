@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ENV } from "@/env";
 import { createServerClient } from "@/lib/supabase-server-client.server";
 import { cn } from "@/lib/utils";
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { createBrowserClient } from "@supabase/ssr";
 import { AuthError, EmailOtpType } from "@supabase/supabase-js";
 import { z } from "zod";
 import { TopBar } from "./_index/top-bar";
@@ -30,19 +32,39 @@ export async function loader({ request }: LoaderFunctionArgs) {
    const url = new URL(request.url);
    const token_hash = url.searchParams.get("token_hash");
    const type = url.searchParams.get("type");
+   const code = url.searchParams.get("code");
+
+   const { supabase, headers } = createServerClient(request);
 
    let error: AuthError | null = null;
    if (token_hash && type) {
-      const { supabase, headers } = createServerClient(request);
+      // Magic Links, sign up links
       ({ error } = await supabase.auth.verifyOtp({ token_hash, type: type as EmailOtpType }));
       if (!error) throw redirect("/dashboard", { headers });
    }
 
-   return { error };
+   if (code) {
+      // Social login (Google, Github, etc)
+      ({ error } = await supabase.auth.exchangeCodeForSession(code));
+      if (!error) throw redirect("/dashboard", { headers });
+   }
+
+   return { error, SUPABASE_URL: ENV.SUPABASE_URL, SUPABASE_ANON_KEY: ENV.SUPABASE_ANON_KEY };
 }
 
 export default function SignIn() {
+   const loaderData = useLoaderData<typeof loader>();
    const actionData = useActionData<typeof action>();
+
+   const supabase = createBrowserClient(loaderData.SUPABASE_URL, loaderData.SUPABASE_ANON_KEY);
+
+   async function handleGoogleLogin() {
+      console.log("login with google");
+      await supabase.auth.signInWithOAuth({
+         provider: "google",
+         options: { redirectTo: "http://localhost:5173/login" },
+      });
+   }
 
    return (
       <>
@@ -67,6 +89,9 @@ export default function SignIn() {
 
                <div className="flex w-full gap-x-2">
                   <Button className="w-full">Send Magic Link</Button>
+                  <Button type="button" className="w-full" onClick={handleGoogleLogin}>
+                     Login with Google
+                  </Button>
                </div>
                {actionData &&
                   (actionData.success ? (
