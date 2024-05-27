@@ -1,14 +1,17 @@
 import { relations } from "drizzle-orm";
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { jsonb } from "../utils";
 import { extractorJobsTable } from "./extractor-jobs";
+import { usersTable } from "./users";
 
 export const TRANSCRIPT_STATUS = ["waiting", "started", "failed", "completed"] as const;
 export const TRANSCRIPT_LANGUAGES = ["es", "en"] as const;
 
 export const transcriptsTable = pgTable("transcripts", {
    id: serial("id").primaryKey(),
-   user_id: text("user_id").notNull(),
+   user_id: uuid("user_id")
+      .references(() => usersTable.id, { onDelete: "cascade" })
+      .notNull(),
    object_id: text("object_id"),
    name: text("name").notNull(),
    language: text("language", { enum: TRANSCRIPT_LANGUAGES }).notNull(),
