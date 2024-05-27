@@ -1,15 +1,18 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import { jsonb } from "../utils";
 import { Question, extractorsTable } from "./extractors";
 import { transcriptsTable } from "./transcripts";
+import { usersTable } from "./users";
 
 export const EXTRACTOR_JOB_STATUS = ["waiting", "started", "failed", "completed"] as const;
 
 export const extractorJobsTable = pgTable("extractor_jobs", {
    id: serial("id").primaryKey(),
-   user_id: text("user_id").notNull(),
+   user_id: uuid("user_id")
+      .references(() => usersTable.id, { onDelete: "cascade" })
+      .notNull(),
    transcript_id: integer("transcript_id")
       .references(() => transcriptsTable.id, { onDelete: "cascade" })
       .notNull(),
