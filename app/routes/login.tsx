@@ -49,7 +49,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       if (!error) throw redirect("/dashboard", { headers });
    }
 
-   return { error, SUPABASE_URL: ENV.SUPABASE_URL, SUPABASE_ANON_KEY: ENV.SUPABASE_ANON_KEY };
+   return {
+      error,
+      SUPABASE_URL: ENV.SUPABASE_URL,
+      SUPABASE_ANON_KEY: ENV.SUPABASE_ANON_KEY,
+      APP_URL: ENV.APP_URL,
+   };
 }
 
 export default function SignIn() {
@@ -59,10 +64,9 @@ export default function SignIn() {
    const supabase = createBrowserClient(loaderData.SUPABASE_URL, loaderData.SUPABASE_ANON_KEY);
 
    async function handleGoogleLogin() {
-      console.log("login with google");
       await supabase.auth.signInWithOAuth({
          provider: "google",
-         options: { redirectTo: "http://localhost:5173/login" },
+         options: { redirectTo: `${loaderData.APP_URL}/login` },
       });
    }
 
