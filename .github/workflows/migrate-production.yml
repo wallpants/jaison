@@ -15,6 +15,11 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      # these are needed because supabase dumb
+      # they read config.toml and expect all env vars to be defined
+      # even if irrelevant
+      SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET: ""
+      SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ""
 
     steps:
       - uses: actions/checkout@v4
