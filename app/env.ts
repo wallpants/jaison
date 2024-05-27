@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const ENV = z
    .object({
+      APP_URL: z.string().url(),
+
       POSTGRES_URL: z.string().min(1),
 
       REVAI_KEY: z.string().min(1),
